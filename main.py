@@ -1,5 +1,5 @@
-from model.gun import Gun
+from controller.jogo import Jogo
 
 if __name__ == '__main__':
-    gun = Gun()
-    gun.shoot()
+    jogo = Jogo()
+    jogo.iniciar()

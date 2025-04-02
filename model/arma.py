@@ -6,7 +6,6 @@ class Gun:
     
     @property
     def pente(self):
-        """The pente property."""
         return self.__pente
 
     @pente.setter
@@ -22,4 +21,9 @@ class Gun:
         for i in range(6):
             result = randint(0,1)
             self.pente.append(bool(result))
+
+    def isPenteVazio(self):
+        if len(self.pente) == 0:
+            return True
+        return False
 
