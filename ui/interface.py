@@ -21,7 +21,7 @@ class Interface:
         root = tk.Tk()
         root.title("Buckshot Roulette")
         root.geometry("800x450")
-        root.configure(bg='gray')
+        root.configure(bg="gray")
         
         # Menu
         menubar = Menu(root)
@@ -30,6 +30,7 @@ class Interface:
         menu = Menu(menubar, tearoff=False)
         menu.add_command(label="Conectar", command=self.conectar)
         menu.add_command(label="Desconectar", command=self.desconectar)
+        menu.add_command(label="Add", command=self.criarPenteBar(root, [False, False, False]))
 
         menubar.add_cascade(label="Menu", menu=menu)
         
@@ -79,13 +80,13 @@ class Interface:
                     border = Frame(icon_frame, bg='black', width=45, height=45)
                     border.grid(row=row, column=col, padx=5, pady=5)
                     icon_index = (row * 2 + col) % len(icons)
-                    label = Label(border, image=icons[icon_index], bg='white')
+                    label = Label(border, image=icons[icon_index], bg='white', borderwidth=2, relief="solid")
                     label.image = icons[icon_index]
                     label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.on_icon_click(name))
                     label.pack()
 
     def criarMensagens(self, root):
-        turn_label = Label(root, text="VEZ DO JOGADOR 1", bg='white')
+        turn_label = Label(root, text="VEZ DO JOGADOR 1", bg='white', borderwidth=2, relief="solid")
         turn_label.place(x=300, y=200, width=200, height=30)
  
 
@@ -95,7 +96,7 @@ class Interface:
         
         for i in numeroBalas:
             color = 'blue' if i is True else 'red'
-            Label(status_bar, bg=color, width=2, height=1).pack()
+            Label(status_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()
         
     def conectar(self):
         print("Conectando")
@@ -105,6 +106,9 @@ class Interface:
 
     def getBalas(self):
         return [True, False, False, True]
+
+    def updateGui(self, root):
+        
 
 
 Interface().criar_ui()
