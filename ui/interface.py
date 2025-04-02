@@ -7,7 +7,7 @@ class Interface:
         self.__player_icone = "jogador.png"
         self.__root = tk.Tk()
         self.status_bar = None
-        self.numeroBalas = [True, False, False, True]  # Estado inicial das balas
+        self.numeroBalas = []
 
     @property
     def icones(self):
@@ -29,7 +29,6 @@ class Interface:
         print(f"Ícone clicado: {icon_name}")
 
     def criar_ui(self):
-        self.root = tk.Tk()
         self.root.title("Buckshot Roulette")
         self.root.geometry("800x450")
         self.root.configure(bg="gray")
@@ -41,7 +40,7 @@ class Interface:
         self.criarPlayers()
 
         # Indicador de vez
-        self.criarMensagens()
+        self.criarMensagens("ALSFKJ")
 
         # Slots
         self.criarSlots()
@@ -95,8 +94,8 @@ class Interface:
                     label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.on_icon_click(name))
                     label.pack()
 
-    def criarMensagens(self):
-        turn_label = Label(self.root, text="VEZ DO JOGADOR 1", bg='white', borderwidth=2, relief="solid")
+    def criarMensagens(self, msg):
+        turn_label = Label(self.root, text=msg, bg='white', borderwidth=2, relief="solid")
         turn_label.place(x=300, y=200, width=200, height=30)
 
     def criarPenteBar(self):
@@ -133,7 +132,7 @@ class Interface:
 
         # Criar componentes
         self.criarPlayers()
-        self.criarMensagens()
+        self.criarMensagens("LASKDJ")
         self.criarSlots()
         self.criarPenteBar()
         self.numeroBalas.append(True)
