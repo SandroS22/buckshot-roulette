@@ -35,16 +35,7 @@ class Interface:
         
         
         # Área dos jogadores
-        for i, y in enumerate([50, 300]):
-            player_frame = Frame(root, bg='gray')
-            player_frame.place(x=300, y=y, width=200, height=100)
-            
-            player_label = Label(player_frame, image=PhotoImage(file=self.player_icone).subsample(8,8), bg='gray')
-            player_label.bind("<Button-1>", lambda e, name=f"Jogador {i+1}": self.on_icon_click(name))
-            player_label.pack()
-            
-            health_bar = Frame(player_frame, bg='green', width=100, height=10)
-            health_bar.pack()
+        self.criarPlayers(root)
         
         # Indicador de vez
         self.criarMensagens(root)
@@ -58,23 +49,22 @@ class Interface:
 
         root.mainloop()
 
-    def criarSlots(self, root):
+    def criarPlayers(self, root):
         player_icon = PhotoImage(file=self.player_icone).subsample(8, 8)
         for i, y in enumerate([50, 300]):
             player_frame = Frame(root, bg='gray')
             player_frame.place(x=300, y=y, width=200, height=100)
             
             player_label = Label(player_frame, image=player_icon, bg='gray')
+            player_label.image = player_icon
             player_label.bind("<Button-1>", lambda e, name=f"Jogador {i+1}": self.on_icon_click(name))
             player_label.pack()
             
             health_bar = Frame(player_frame, bg='green', width=100, height=10)
             health_bar.pack()
 
-        # Indicador de vez
-        turn_label = Label(root, text="VEZ DO JOGADOR 1", bg='white')
-        turn_label.place(x=300, y=200, width=200, height=30)
-        
+
+    def criarSlots(self, root):
         # Ícones e botões com imagens PNG redimensionadas em um grid 2x2
         icon_paths = self.icones
         icons = [PhotoImage(file=path).subsample(15, 15) for path in icon_paths]  # Reduz o tamanho
@@ -90,6 +80,7 @@ class Interface:
                     border.grid(row=row, column=col, padx=5, pady=5)
                     icon_index = (row * 2 + col) % len(icons)
                     label = Label(border, image=icons[icon_index], bg='white')
+                    label.image = icons[icon_index]
                     label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.on_icon_click(name))
                     label.pack()
 
@@ -103,7 +94,7 @@ class Interface:
         status_bar.place(x=700, y=150)
         
         for i in numeroBalas:
-            color = 'green' if i is True else 'red'
+            color = 'blue' if i is True else 'red'
             Label(status_bar, bg=color, width=2, height=1).pack()
         
     def conectar(self):
