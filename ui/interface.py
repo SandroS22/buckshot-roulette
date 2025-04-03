@@ -6,8 +6,8 @@ class Interface:
         self.__icones = ["lupa.png", "algemas.png", "cerveja.png", "cigarro.png", "serra.png"]
         self.__player_icone = "jogador.png"
         self.__root = tk.Tk()
-        self.status_bar = None
-        self.numeroBalas = []
+        self.__status_bar = None
+        self.__balas = []
 
     @property
     def icones(self):
@@ -24,6 +24,22 @@ class Interface:
     @root.setter
     def root(self, value):
         self._root = value
+
+    @property
+    def status_bar(self):
+        return self.__status_bar
+
+    @status_bar.setter
+    def status_bar(self, value):
+        self.__status_bar = value
+
+    @property
+    def balas(self):
+        return self.__balas
+
+    @balas.setter
+    def numero_balas(self, value):
+        self.__balas = value
 
     def on_icon_click(self, icon_name):
         print(f"Ícone clicado: {icon_name}")
@@ -105,7 +121,7 @@ class Interface:
         self.status_bar = Frame(self.root, bg='black', width=20, height=200)
         self.status_bar.place(x=700, y=150)
 
-        for bala in self.numeroBalas:
+        for bala in self.balas:
             color = 'blue' if bala else 'red'
             Label(self.status_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()
 
@@ -127,14 +143,14 @@ class Interface:
         menu = Menu(menubar, tearoff=False)
         menu.add_command(label="Conectar", command=self.conectar)
         menu.add_command(label="Desconectar", command=self.desconectar)
-        menu.add_command(label="Add", command=self.atualizar_ui)  # Chama o updateGui no clique
+        menu.add_command(label="Add", command=self.atualizar_ui)
         menubar.add_cascade(label="Menu", menu=menu)
 
         # Criar componentes
         self.criarPlayers()
-        self.criarMensagens("LASKDJ")
+        self.criarMensagens("")
         self.criarSlots()
         self.criarPenteBar()
-        self.numeroBalas.append(True)
+        self.balas.append(True)
 
 Interface().criar_ui()
