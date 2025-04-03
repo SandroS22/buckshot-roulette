@@ -8,6 +8,7 @@ class Interface:
         self.__root = tk.Tk()
         self.__status_bar = None
         self.__balas = []
+        self.__msg = ""
 
     @property
     def icones(self):
@@ -41,6 +42,14 @@ class Interface:
     def numero_balas(self, value):
         self.__balas = value
 
+    @property
+    def msg(self):
+        return self.__msg
+
+    @msg.setter
+    def msg(self, value):
+        self.__msg = value
+
     def on_icon_click(self, icon_name):
         print(f"Ícone clicado: {icon_name}")
 
@@ -56,7 +65,7 @@ class Interface:
         self.criarPlayers()
 
         # Indicador de vez
-        self.criarMensagens("ALSFKJ")
+        self.criarMensagens()
 
         # Slots
         self.criarSlots()
@@ -107,18 +116,18 @@ class Interface:
                     icon_index = (row * 2 + col) % len(icons)
                     label = Label(border, image=icons[icon_index], bg='white', borderwidth=2, relief="solid")
                     label.image = icons[icon_index]
-                    label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.on_icon_click(name))
+                    label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.nova_msg(name))
                     label.pack()
 
-    def criarMensagens(self, msg):
-        turn_label = Label(self.root, text=msg, bg='white', borderwidth=2, relief="solid")
+    def criarMensagens(self):
+        turn_label = Label(self.root, text=self.msg, bg='white', borderwidth=2, relief="solid")
         turn_label.place(x=300, y=200, width=200, height=30)
 
     def criarPenteBar(self):
         if self.status_bar:
             self.status_bar.destroy()  # Remove a barra anterior para recriar
 
-        self.status_bar = Frame(self.root, bg='black', width=20, height=200)
+        self.status_bar = Frame(self.root, bg='gray', width=20, height=200)
         self.status_bar.place(x=700, y=150)
 
         for bala in self.balas:
@@ -132,8 +141,6 @@ class Interface:
         print("Desconectando")
 
     def atualizar_ui(self):
-        """Recria toda a interface"""
-        # Remove todos os widgets da tela
         for widget in self.root.winfo_children():
             widget.destroy()
 
@@ -148,9 +155,16 @@ class Interface:
 
         # Criar componentes
         self.criarPlayers()
-        self.criarMensagens("")
+        self.criarMensagens()
         self.criarSlots()
         self.criarPenteBar()
-        self.balas.append(True)
+        self.balas.append(False)
 
-Interface().criar_ui()
+    def nova_msg(self, msg):
+        self.msg = msg
+        self.atualizar_ui()
+
+
+interface = Interface()
+interface.criar_ui()
+
