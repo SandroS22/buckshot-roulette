@@ -113,10 +113,10 @@ class Interface:
             player_frame.place(x=300, y=y, width=200, height=100)
             player_label = Label(player_frame, image=player_icon, bg='gray')
             player_label.image = player_icon # Por algum motivo o garbage colector some com o icone sem isso
-            player_label.bind("<Button-1>", lambda e, name=f"Jogador {i+1}": self.on_icon_click(name))
+            player_label.bind("<Button-1>", lambda e, name=f"Jogador {i}": self.on_icon_click(name))
             player_label.pack()
 
-            health_bar = Frame(player_frame, bg='green', width=100, height=10)
+            health_bar = Frame(player_frame, bg='green', width=10, height=10)
             health_bar.pack()
 
     def criar_slots(self):
@@ -145,19 +145,19 @@ class Interface:
                 self.criar_slot(x, y, icon_iter, item_iter)
 
     def criar_slot(self, x, y, icon_iter, item_iter):
-        icon_frame = Frame(self.root, bg='gray')
-        icon_frame.place(x=x, y=y, width=50, height=50)
+        icone_frame = Frame(self.root, bg='gray')
+        icone_frame.place(x=x, y=y, width=50, height=50)
 
-        border = Frame(icon_frame, bg='white', width=80, height=80)
+        border = Frame(icone_frame, bg='white', width=80, height=80)
         border.pack(padx=5, pady=5, fill='both', expand=True)
 
         try:
-            icon_image = next(icon_iter)
-            item_name = next(item_iter)
+            icone_imagem = next(icon_iter)
+            nome_item = next(item_iter)
 
-            label = Label(border, image=icon_image, bg='white', borderwidth=2, relief="solid")
-            label.image = icon_image
-            label.bind("<Button-1>", lambda e, name=item_name: self.nova_msg(name))
+            label = Label(border, image=icone_imagem, bg='white', borderwidth=2, relief="solid")
+            label.image = icone_imagem
+            label.bind("<Button-1>", lambda e, nome=nome_item: self.nova_msg(nome))
             label.pack(fill='both', expand=True)
 
         except StopIteration:
