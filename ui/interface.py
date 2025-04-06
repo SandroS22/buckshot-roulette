@@ -3,7 +3,7 @@ from tkinter import Label, Frame, PhotoImage, Menu
 
 class Interface:
     def __init__(self):
-        self.__itens = ["algemas.png"]
+        self.__itens = ["algemas.png", "cerveja.png", "cigarro.png", "lupa.png", "serra.png"]
         self.__player_icone = "jogador.png"
         self.__root = tk.Tk()
         self.__status_bar = None
@@ -94,7 +94,7 @@ class Interface:
             player_frame = Frame(self.root, bg='gray')
             player_frame.place(x=300, y=y, width=200, height=100)
             player_label = Label(player_frame, image=player_icon, bg='gray')
-            player_label.image = player_icon
+            player_label.image = player_icon # Por algum motivo o garbage colector some com o icone sem isso
             player_label.bind("<Button-1>", lambda e, name=f"Jogador {i+1}": self.on_icon_click(name))
             player_label.pack()
 
@@ -103,23 +103,45 @@ class Interface:
 
     def criar_slots(self):
         icons = [PhotoImage(file=item).subsample(15) for item in self.itens]
-        positions = [(50, 50), (550, 50), (50, 300), (550, 300)]
+        icon_index = 0  # para rastrear qual ícone estamos usando
 
-        for x, y in positions:
-            print(x, y)
-            icon_frame = Frame(self.root, bg='gray')
-            icon_frame.place(x=x, y=y, width=100, height=100)
+        # Definindo as posições dos 4 quadrantes
+        quadrantes = [
+            (50, 50),  # Superior esquerdo
+            (600, 50),  # Superior direito
+            (50, 300),  # Inferior esquerdo
+            (600, 300)  # Inferior direito
+        ]
 
+        for x_base, y_base in quadrantes:
             for row in range(2):
                 for col in range(2):
-                    border = Frame(icon_frame, bg='white', width=45, height=45)
-                    border.grid(row=row, column=col, padx=5, pady=5)
-                    if len(self.itens) > 0:
-                        icon_index = (row * 2 + col) % len(icons)
-                        label = Label(border, image=icons[icon_index], bg='white', borderwidth=2, relief="solid")
-                        label.image = icons[icon_index]
-                        label.bind("<Button-1>", lambda e, name=self.itens[icon_index]: self.nova_msg(name))
-                        label.pack()
+                    # Calcula a posição de cada slot dentro do quadrante
+                    x = x_base + col * 50
+                    y = y_base + row * 50
+
+                    # Cria o frame do slot
+                    icon_frame = Frame(self.root, bg='gray')
+                    icon_frame.place(x=x, y=y, width=45, height=45)
+
+                    # Cria a borda branca
+                    border = Frame(icon_frame, bg='black', width=80, height=80)
+                    border.pack(padx=5, pady=5, fill='both', expand=True)
+
+                    if icon_index < len(icons):
+                        icon_image = icons[icon_index]
+                        item_name = self.itens[icon_index]
+
+                        label = Label(border, image=icon_image, bg='white', borderwidth=2, relief="solid")
+                        label.image = icon_image  # Por algum motivo o garbage colector some com o icone sem isso
+                        label.bind("<Button-1>", lambda e, name=item_name: self.nova_msg(name))
+                        label.pack(fill='both', expand=True)
+
+                        icon_index += 1
+                    else:
+                        # Slot vazio, mas mantendo o espaço e borda
+                        empty_label = Label(border, bg='white', borderwidth=2, relief="solid")
+                        empty_label.pack(fill='both', expand=True)
 
     def criar_mensagens(self):
         turn_label = Label(self.root, text=self.msg, bg='white', borderwidth=2, relief="solid")
