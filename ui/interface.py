@@ -3,7 +3,7 @@ from tkinter import Label, Frame, PhotoImage, Menu
 
 class Interface:
     def __init__(self):
-        self.__icones = ["lupa.png", "algemas.png", "cerveja.png", "cigarro.png", "serra.png"]
+        self.__itens = ["algemas.png"]
         self.__player_icone = "jogador.png"
         self.__root = tk.Tk()
         self.__status_bar = None
@@ -11,8 +11,12 @@ class Interface:
         self.__msg = ""
 
     @property
-    def icones(self):
-        return self.__icones
+    def itens(self):
+        return self.__itens
+
+    @itens.setter
+    def itens(self, itens):
+        self.__itens = itens
 
     @property
     def player_icone(self):
@@ -24,7 +28,7 @@ class Interface:
 
     @root.setter
     def root(self, value):
-        self._root = value
+        self.__root = value
 
     @property
     def status_bar(self):
@@ -39,7 +43,7 @@ class Interface:
         return self.__balas
 
     @balas.setter
-    def numero_balas(self, value):
+    def balas(self, value):
         self.__balas = value
 
     @property
@@ -59,36 +63,33 @@ class Interface:
         self.root.configure(bg="gray")
 
         # Menu
-        self.criarMenu()
+        self.criar_menu()
 
         # Área dos jogadores
-        self.criarPlayers()
+        self.criar_players()
 
         # Indicador de vez
-        self.criarMensagens()
+        self.criar_mensagens()
 
         # Slots
-        self.criarSlots()
+        self.criar_slots()
 
         # Barra lateral de status
-        self.criarPenteBar()
-
-        self.atualizar_ui()
+        self.criar_pente_bar()
 
         self.root.mainloop()
 
-    def criarMenu(self):
+    def criar_menu(self):
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
         menu = Menu(menubar, tearoff=False)
         menu.add_command(label="Conectar", command=self.conectar)
         menu.add_command(label="Desconectar", command=self.desconectar)
         menu.add_command(label="Add", command=self.atualizar_ui)
-
         menubar.add_cascade(label="Menu", menu=menu)
 
-    def criarPlayers(self):
-        player_icon = PhotoImage(file=self.player_icone).subsample(8, 8)
+    def criar_players(self):
+        player_icon = PhotoImage(file=self.player_icone).subsample(8)
         for i, y in enumerate([50, 300]):
             player_frame = Frame(self.root, bg='gray')
             player_frame.place(x=300, y=y, width=200, height=100)
@@ -100,33 +101,31 @@ class Interface:
             health_bar = Frame(player_frame, bg='green', width=100, height=10)
             health_bar.pack()
 
-    def criarSlots(self):
-        icon_paths = self.icones
-        icons = [PhotoImage(file=path).subsample(15, 15) for path in icon_paths]
+    def criar_slots(self):
+        icons = [PhotoImage(file=item).subsample(15) for item in self.itens]
         positions = [(50, 50), (550, 50), (50, 300), (550, 300)]
 
         for x, y in positions:
+            print(x, y)
             icon_frame = Frame(self.root, bg='gray')
             icon_frame.place(x=x, y=y, width=100, height=100)
 
             for row in range(2):
                 for col in range(2):
-                    border = Frame(icon_frame, bg='black', width=45, height=45)
+                    border = Frame(icon_frame, bg='white', width=45, height=45)
                     border.grid(row=row, column=col, padx=5, pady=5)
-                    icon_index = (row * 2 + col) % len(icons)
-                    label = Label(border, image=icons[icon_index], bg='white', borderwidth=2, relief="solid")
-                    label.image = icons[icon_index]
-                    label.bind("<Button-1>", lambda e, name=icon_paths[icon_index]: self.nova_msg(name))
-                    label.pack()
+                    if len(self.itens) > 0:
+                        icon_index = (row * 2 + col) % len(icons)
+                        label = Label(border, image=icons[icon_index], bg='white', borderwidth=2, relief="solid")
+                        label.image = icons[icon_index]
+                        label.bind("<Button-1>", lambda e, name=self.itens[icon_index]: self.nova_msg(name))
+                        label.pack()
 
-    def criarMensagens(self):
+    def criar_mensagens(self):
         turn_label = Label(self.root, text=self.msg, bg='white', borderwidth=2, relief="solid")
         turn_label.place(x=300, y=200, width=200, height=30)
 
-    def criarPenteBar(self):
-        if self.status_bar:
-            self.status_bar.destroy()  # Remove a barra anterior para recriar
-
+    def criar_pente_bar(self):
         self.status_bar = Frame(self.root, bg='gray', width=20, height=200)
         self.status_bar.place(x=700, y=150)
 
@@ -144,27 +143,23 @@ class Interface:
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        # Criar menu
-        menubar = Menu(self.root)
-        self.root.config(menu=menubar)
-        menu = Menu(menubar, tearoff=False)
-        menu.add_command(label="Conectar", command=self.conectar)
-        menu.add_command(label="Desconectar", command=self.desconectar)
-        menu.add_command(label="Add", command=self.atualizar_ui)
-        menubar.add_cascade(label="Menu", menu=menu)
-
         # Criar componentes
-        self.criarPlayers()
-        self.criarMensagens()
-        self.criarSlots()
-        self.criarPenteBar()
-        self.balas.append(False)
+        self.criar_menu()
+        self.criar_players()
+        self.criar_mensagens()
+        self.criar_slots()
+        self.criar_pente_bar()
 
     def nova_msg(self, msg):
         self.msg = msg
         self.atualizar_ui()
 
+    def adicionar_itens(self, itens):
+        self.itens.extend(itens)
+        self.atualizar_ui()
+
 
 interface = Interface()
 interface.criar_ui()
+
 
