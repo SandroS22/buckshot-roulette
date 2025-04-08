@@ -1,8 +1,8 @@
 from enum import Enum
 
 class TipoItem(Enum):
-    LUPA = "Olha a bala atual"
-    CERVEJA = "Retira uma bala do pente"
-    ALGEMA = "Prente o oponente por uma rodada"
-    CIGARRO = "Recupera 1 de vida"
-    SERRA = "Duplica o dano"
+    ALGEMAS = "Algemas: impede o inimigo de jogar por uma rodada."
+    CERVEJA = "Cerveja: remove a munição atual da arma."
+    CIGARRO = "Cigarro: recupera 1 de vida."
+    LUPA = "Lupa: revela a munição da câmara atual."
+    SERRA = "Serra: duplica o dano da arma."

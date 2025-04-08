@@ -1,29 +1,32 @@
 from random import randint
-
-class Gun:
+class Arma:
     def __init__(self):
-        self.__pente = []
-    
-    @property
-    def pente(self):
-        return self.__pente
+        self.__municoes = []
 
-    @pente.setter
-    def pente(self, value):
-        self.__pente = value
-    
-    def atirar(self):
-        bala = self.pente[0]
-        self.pente.pop(0)
-        return bala
+
+    @property
+    def municoes(self):
+        return self.__municoes
+
+    @municoes.setter
+    def municoes(self, value):
+        self.__municoes = value
 
     def carregar(self):
-        for i in range(6):
-            result = randint(0,1)
-            self.pente.append(bool(result))
+        for _ in range(6):
+            self.municoes.append(bool(randint(0, 1)))
 
-    def isPenteVazio(self):
-        if len(self.pente) == 0:
-            return True
-        return False
+    def atirar(self):
+        if len(self.municoes) > 0:
+            return None
+        return self.municoes.pop(0)
+
+    def remover_municao(self):
+        if self.municoes:
+            self.municoes.pop(0)
+
+    def ver_camara(self):
+        if self.municoes:
+            return self.municoes[0]
+        return None
 
