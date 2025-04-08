@@ -1,7 +1,9 @@
-from random import randint
+from random import randint, shuffle
+
 class Arma:
     def __init__(self):
         self.__municoes = []
+        self.__is_vazio = True
 
 
     @property
@@ -12,21 +14,36 @@ class Arma:
     def municoes(self, value):
         self.__municoes = value
 
+    @property
+    def is_vazio(self):
+        return self.__is_vazio
+
+    @is_vazio.setter
+    def is_vazio(self, value):
+        self.__is_vazio = value                                     
+
     def carregar(self):
         for _ in range(6):
             self.municoes.append(bool(randint(0, 1)))
+        self.is_vazio = False
+
+    def embaralhar_municao(self):
+        shuffle(self.municoes)
 
     def atirar(self):
-        if len(self.municoes) > 0:
-            return None
-        return self.municoes.pop(0)
+        if not self.is_vazio:
+            self.municoes.pop(0)
+            if len(self.municoes) == 0:
+                self.is_vazio = True
+            return True
+        return False
 
     def remover_municao(self):
-        if self.municoes:
-            self.municoes.pop(0)
+        if not self.is_vazio:
+            return self.municoes.pop(0)
 
     def ver_camara(self):
-        if self.municoes:
+        if not self.is_vazio:
             return self.municoes[0]
         return None
 

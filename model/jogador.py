@@ -1,9 +1,13 @@
+from inventario import Inventario
+
 class Jogador:
-    def __init__(self):
-        self.__id_jogador = None
+    def __init__(self, id_jogador, nome):
+        self.__id_jogador = id_jogador
+        self.__nome = nome
         self.__vida = 6
         self.__is_turno = False
         self.__venceu = False
+        self.__inventario = Inventario()
 
     @property
     def id_jogador(self):
@@ -12,6 +16,14 @@ class Jogador:
     @id_jogador.setter
     def id(self, value):
         self.__id_jogador = value
+
+    @property
+    def nome(self):
+        return self.__nome
+
+    @nome.setter
+    def nome(self, value):
+        self.__nome = value
 
     @property
     def vida(self):
@@ -36,3 +48,12 @@ class Jogador:
     @venceu.setter
     def venceu(self, value):
         self.__venceu = value
+
+
+    @property
+    def inventario(self):
+        return self.__inventario
+
+    @inventario.setter
+    def inventario(self, value):
+        self.__inventario = value

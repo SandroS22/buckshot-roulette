@@ -1,5 +1,4 @@
 from model.arma import Arma
-from model.inventario import Inventario
 
 class Partida:
     def __init__(self):
@@ -26,4 +25,12 @@ class Partida:
     @property
     def jogadores(self):
         return self.__jogadores
+
+
+    def checa_ganhador(self):
+        if self.partida_em_andamento:
+            for jogador in self.jogadores:
+                if jogador.venceu:
+                    return jogador
+        return False
 
