@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import Label, Frame, PhotoImage, Menu
 
+
 class Interface:
     def __init__(self):
         self.__itens = []
-        self.__player_icone = "jogador.png"
+        self.__player_icone = "ui/jogador.png"
         self.__root = tk.Tk()
         self.__status_bar = None
         self.__balas = []
@@ -13,6 +14,8 @@ class Interface:
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6
+        self.__conectar = None
+        self.__desconectar = None
 
     @property
     def itens(self):
@@ -91,6 +94,22 @@ class Interface:
         self.__vida_oponente = value
 
 
+    @property
+    def conectar(self):
+        return self.__conectar
+
+    @conectar.setter
+    def conectar(self, value):
+        self.__conectar = value
+
+    @property
+    def desconectar(self):
+        return self.__desconectar
+
+    @desconectar.setter
+    def desconectar(self, value):
+        self.__desconectar = value
+
     def on_icon_click(self, icon_name):
         if icon_name == "Jogador 0":
             icon_name = "Oponente"
@@ -157,9 +176,6 @@ class Interface:
                     vida_frame.grid(row=0, column=vida, padx=2, pady=2)
 
     def criar_slots(self):
-        self.itens_player = ["lupa.png", "serra.png", "algemas.png", "cigarro.png", "serra.png", "algemas.png"]
-        self.itens_oponente = ["cigarro.png", "serra.png", "algemas.png"]
-
         # Criar iteradores compartilhados
         icon_iter_cima = iter([PhotoImage(file=item).subsample(15) for item in self.itens_oponente])
         item_iter_cima = iter(self.itens_oponente)
@@ -214,14 +230,6 @@ class Interface:
             color = 'blue' if bala else 'red'
             Label(self.status_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()
 
-    def conectar(self):
-        self.msg = "CONECTADO"
-        self.atualizar_ui()
-
-    def desconectar(self):
-        self.msg = "DESCONECTADO"
-        self.atualizar_ui()
-
     def atualizar_ui(self):
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -246,9 +254,3 @@ class Interface:
         self.vida_player = vida_player
         self.vida_oponente = vida_oponente
         self.atualizar_ui()
-
-
-interface = Interface()
-interface.criar_ui()
-
-
