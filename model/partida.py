@@ -74,9 +74,9 @@ class Partida(DogPlayerInterface):
 
     def checa_ganhador(self):
         if self.player_local.venceu:
-            return self.player_local
+            return self.player_local.nome
         elif self.player_remoto.venceu:
-            return self.player_remoto
+            return self.player_remoto.nome
         return None
 
     def desconectar(self):
@@ -89,7 +89,7 @@ class Partida(DogPlayerInterface):
         start_status = self.dog_server.start_match(2)
         code = start_status.get_code()
         message = start_status.get_message()
-
+ 
         if code == "0" or code == "1":
             self.interface.nova_msg(message)
         else:
@@ -108,6 +108,13 @@ class Partida(DogPlayerInterface):
             self.status_partida = "3"
         elif self.player_remoto.is_turno:
             self.status_partida = "5"
+
+    def usar_item_command(self, item):
+        print(item)
+        
+
+    def receber_jogada(self, jogada):
+        pass
 
 
     def is_partida_em_andamento(self):

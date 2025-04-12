@@ -9,11 +9,12 @@ class Interface:
         self.__pente_bar = None
         self.__balas = []
         self.__msg = ""
-        self.__itens_player =[]
+        self.__itens_player =["ui/algemas.png"]
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6
         self.__iniciar_partida_command = None
+        self.__usar_item_command = None
 
     @property
     def player_icone(self):
@@ -91,7 +92,15 @@ class Interface:
     def iniciar_partida_command(self, value):
         self.__iniciar_partida_command = value
 
-    def on_icon_click(self, icon_name):
+    @property
+    def usar_item_command(self):
+        return self.__usar_item_command
+
+    @usar_item_command.setter
+    def usar_item_command(self, value):
+        self.__usar_item_command = value
+
+    def player_icone_click(self, icon_name):
         if icon_name == "Jogador 0":
             icon_name = "Oponente"
         if icon_name == "Jogador 1":
@@ -140,7 +149,7 @@ class Interface:
             # Ícone do jogador
             player_label = Label(player_frame, image=player_icon, bg='gray')
             player_label.image = player_icon  # Evita que o garbage collector remova a imagem
-            player_label.bind("<Button-1>", lambda e, name=f"Jogador {i}": self.on_icon_click(name))
+            player_label.bind("<Button-1>", lambda e, name=f"Jogador {i}": self.player_icone_click(name))
             player_label.pack()
 
             # Criar frame para a barra de vida
@@ -193,7 +202,7 @@ class Interface:
 
             label = Label(border, image=icone_imagem, bg='white', borderwidth=2, relief="solid")
             label.image = icone_imagem
-            label.bind("<Button-1>", lambda e, nome=nome_item: self.nova_msg(nome))
+            label.bind("<Button-1>", lambda e, nome=nome_item: self.usar_item_command(nome))
             label.pack(fill='both', expand=True)
 
         except StopIteration:

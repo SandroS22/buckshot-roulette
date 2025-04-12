@@ -21,3 +21,7 @@ class Item:
     @descricao.setter
     def descricao(self, value):
         self.__descricao = value
+
+    def icone(self):
+        nome_icone = "ui/" + self.tipo.name.lower() + ".png"
+        return nome_icone 

@@ -27,4 +27,5 @@ class JogoController:
         self.interface = Interface()
         self.partida = Partida(self.interface)
         self.interface.iniciar_partida_command = self.partida.comecar_nova_partida_command
+        self.interface.usar_item_command = self.partida.usar_item_command
         self.interface.criar_ui()
