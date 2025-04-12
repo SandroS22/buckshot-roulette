@@ -83,7 +83,7 @@ class Partida(DogPlayerInterface):
         pass
 
     def comecar_nova_partida_command(self):
-        if self.status_partida == "3" or self.status_partida == "4" or self.status_partida == "5":
+        if self.is_partida_em_andamento():
             return
 
         start_status = self.dog_server.start_match(2)
@@ -108,4 +108,10 @@ class Partida(DogPlayerInterface):
             self.status_partida = "3"
         elif self.player_remoto.is_turno:
             self.status_partida = "5"
+
+
+    def is_partida_em_andamento(self):
+        if self.status_partida == "3" or self.status_partida == "4" or self.status_partida == "5":
+            return True
+        return False
 
