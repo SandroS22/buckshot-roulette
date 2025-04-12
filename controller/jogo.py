@@ -1,12 +1,11 @@
 from model.partida import Partida
-
 from ui.interface import Interface
 
 
 class JogoController:
     def __init__(self):
-        self.__interface = None
-        self.__partida = None
+        self.__interface = Interface
+        self.__partida = Partida
 
     @property
     def interface(self):
@@ -27,6 +26,5 @@ class JogoController:
     def iniciar(self):
         self.interface = Interface()
         self.partida = Partida(self.interface)
-        self.interface.conectar = self.partida.comecar_nova_partida
-        self.interface.desconectar = self.partida.comecar_nova_partida
+        self.interface.iniciar_partida_command = self.partida.comecar_nova_partida_command
         self.interface.criar_ui()

@@ -4,26 +4,16 @@ from tkinter import Label, Frame, PhotoImage, Menu
 
 class Interface:
     def __init__(self):
-        self.__itens = []
         self.__player_icone = "ui/jogador.png"
         self.__root = tk.Tk()
-        self.__status_bar = None
+        self.__pente_bar = None
         self.__balas = []
         self.__msg = ""
         self.__itens_player =[]
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6
-        self.__conectar = None
-        self.__desconectar = None
-
-    @property
-    def itens(self):
-        return self.__itens
-
-    @itens.setter
-    def itens(self, itens):
-        self.__itens = itens
+        self.__iniciar_partida_command = None
 
     @property
     def player_icone(self):
@@ -38,12 +28,12 @@ class Interface:
         self.__root = value
 
     @property
-    def status_bar(self):
-        return self.__status_bar
+    def pente_bar(self):
+        return self.__pente_bar
 
-    @status_bar.setter
-    def status_bar(self, value):
-        self.__status_bar = value
+    @pente_bar.setter
+    def pente_bar(self, value):
+        self.__pente_bar = value
 
     @property
     def balas(self):
@@ -92,23 +82,14 @@ class Interface:
     @vida_oponente.setter
     def vida_oponente(self, value):
         self.__vida_oponente = value
-
-
+    
     @property
-    def conectar(self):
-        return self.__conectar
+    def iniciar_partida_command(self):
+        return self.__iniciar_partida_command
 
-    @conectar.setter
-    def conectar(self, value):
-        self.__conectar = value
-
-    @property
-    def desconectar(self):
-        return self.__desconectar
-
-    @desconectar.setter
-    def desconectar(self, value):
-        self.__desconectar = value
+    @iniciar_partida_command.setter
+    def iniciar_partida_command(self, value):
+        self.__iniciar_partida_command = value
 
     def on_icon_click(self, icon_name):
         if icon_name == "Jogador 0":
@@ -134,7 +115,7 @@ class Interface:
         # Slots
         self.criar_slots()
 
-        # Barra lateral de status
+        # Barra lateral do pente
         self.criar_pente_bar()
 
         self.root.mainloop()
@@ -143,8 +124,9 @@ class Interface:
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
         menu = Menu(menubar, tearoff=False)
-        menu.add_command(label="Conectar", command=self.conectar)
-        menu.add_command(label="Desconectar", command=self.desconectar)
+        # menu.add_command(label="Conectar", command=self.metodos_menu[0])
+        # menu.add_command(label="Desconectar", command=self.metodos_menu[1])
+        menu.add_command(label="Iniciar partida", command=self.iniciar_partida_command)
         menubar.add_cascade(label="Menu", menu=menu)
 
     def criar_players(self):
@@ -223,12 +205,12 @@ class Interface:
         turn_label.place(x=300, y=200, width=200, height=30)
 
     def criar_pente_bar(self):
-        self.status_bar = Frame(self.root, bg='gray', width=20, height=200)
-        self.status_bar.place(x=700, y=150)
+        self.pente_bar = Frame(self.root, bg='gray', width=20, height=200)
+        self.pente_bar.place(x=700, y=150)
 
         for bala in self.balas:
             color = 'blue' if bala else 'red'
-            Label(self.status_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()
+            Label(self.pente_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()
 
     def atualizar_ui(self):
         for widget in self.root.winfo_children():

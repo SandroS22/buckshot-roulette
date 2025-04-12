@@ -1,9 +1,9 @@
-from inventario import Inventario
+from model.inventario import Inventario
 
-class Jogador:
-    def __init__(self, id_jogador, nome):
-        self.__id_jogador = id_jogador
-        self.__nome = nome
+class Jogador():
+    def __init__(self):
+        self.__id_jogador = ""
+        self.__nome = ""
         self.__vida = 6
         self.__is_turno = False
         self.__venceu = False
@@ -57,3 +57,21 @@ class Jogador:
     @inventario.setter
     def inventario(self, value):
         self.__inventario = value
+
+    def mudar_turno(self):
+        if self.is_turno is True:
+            self.is_turno = False
+        elif self.is_turno == False:
+            self.is_turno = True
+
+    def iniciar_player(self, player):
+        ordem_jogador = player[2]
+        novo_jogador = Jogador()
+
+        if ordem_jogador == "1":
+            novo_jogador.mudar_turno()
+
+        return novo_jogador
+
+
+
