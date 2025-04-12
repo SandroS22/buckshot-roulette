@@ -26,7 +26,7 @@ class DogProxy:
         if self.player_name == "":
             self.player_name = "player" + str(self.player_id)
         try:
-            config_file = open("src/config/game.id", "r")
+            config_file = open("config/game.id", "r")
             self.game_id = config_file.read()
         except FileNotFoundError:
             self.status = 0
