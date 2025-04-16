@@ -7,7 +7,7 @@ from ui.interface import Interface
 from tkinter import simpledialog, messagebox
 
 
-class Partida(DogPlayerInterface):
+class PlayerInterface(DogPlayerInterface):
     def __init__(self, interface: Interface):
         super().__init__()
         self.__arma = Arma()
@@ -19,7 +19,6 @@ class Partida(DogPlayerInterface):
         self.__dog_server = DogActor()
         message = self.__dog_server.initialize(player_name, self)
         messagebox.showinfo(message=message)
-        self.__interface.atualizar_ui()
 
 
 
@@ -94,12 +93,13 @@ class Partida(DogPlayerInterface):
             self.interface.nova_msg(message)
         else:
             self.comecar_partida(start_status.get_players())
+            self.arma.carregar()
             self.interface.atualizar_ui()
 
     def comecar_partida(self, players):
+        # inicializar arma aqui
         player_local = players[0]
         player_remoto = players[1]
-        print(players)
 
         self.player_local = self.player_local.iniciar_player(player_local)
         self.player_remoto = self.player_remoto.iniciar_player(player_remoto)
@@ -109,8 +109,9 @@ class Partida(DogPlayerInterface):
         elif self.player_remoto.is_turno:
             self.status_partida = "5"
 
-    def usar_item_command(self, item):
+    def usar_item_command(self, item, dono):
         print(item)
+        print(dono)
         
 
     def receber_jogada(self, jogada):

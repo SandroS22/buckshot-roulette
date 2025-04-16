@@ -9,7 +9,7 @@ class Interface:
         self.__pente_bar = None
         self.__balas = []
         self.__msg = ""
-        self.__itens_player =["ui/algemas.png"]
+        self.__itens_player =[]
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6
@@ -100,12 +100,12 @@ class Interface:
     def usar_item_command(self, value):
         self.__usar_item_command = value
 
-    def player_icone_click(self, icon_name):
-        if icon_name == "Jogador 0":
-            icon_name = "Oponente"
-        if icon_name == "Jogador 1":
-            icon_name = "Player"
-        print(f"Ícone clicado: {icon_name}")
+    def player_icone_click(self, nome_icone):
+        if nome_icone == "Jogador 0":
+            nome_icone = "Oponente"
+        if nome_icone == "Jogador 1":
+            nome_icone = "Player"
+        print(f"Ícone clicado: {nome_icone}")
 
     def criar_ui(self):
         self.root.title("Buckshot Roulette")
@@ -133,8 +133,6 @@ class Interface:
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
         menu = Menu(menubar, tearoff=False)
-        # menu.add_command(label="Conectar", command=self.metodos_menu[0])
-        # menu.add_command(label="Desconectar", command=self.metodos_menu[1])
         menu.add_command(label="Iniciar partida", command=self.iniciar_partida_command)
         menubar.add_cascade(label="Menu", menu=menu)
 
@@ -175,21 +173,21 @@ class Interface:
         item_iter_baixo = iter(self.itens_player)
 
         # Criar os quadrantes de cima compartilhando os iteradores
-        self.criar_quadrante(50, 50, icon_iter_cima, item_iter_cima)
-        self.criar_quadrante(600, 50, icon_iter_cima, item_iter_cima)
+        self.criar_quadrante(50, 50, icon_iter_cima, item_iter_cima, "Oponente")
+        self.criar_quadrante(600, 50, icon_iter_cima, item_iter_cima, "Oponente")
 
         # Criar os quadrantes de baixo compartilhando os iteradores
-        self.criar_quadrante(50, 300, icon_iter_baixo, item_iter_baixo)
-        self.criar_quadrante(600, 300, icon_iter_baixo, item_iter_baixo)
+        self.criar_quadrante(50, 300, icon_iter_baixo, item_iter_baixo, "Player")
+        self.criar_quadrante(600, 300, icon_iter_baixo, item_iter_baixo, "Player")
 
-    def criar_quadrante(self, x_base, y_base, icon_iter, item_iter):
+    def criar_quadrante(self, x_base, y_base, icon_iter, item_iter, dono):
         for row in range(2):
             for col in range(2):
                 x = x_base + col * 50
                 y = y_base + row * 50
-                self.criar_slot(x, y, icon_iter, item_iter)
+                self.criar_slot(x, y, icon_iter, item_iter, dono)
 
-    def criar_slot(self, x, y, icon_iter, item_iter):
+    def criar_slot(self, x, y, icon_iter, item_iter, dono_item):
         icone_frame = Frame(self.root, bg='gray')
         icone_frame.place(x=x, y=y, width=50, height=50)
 
@@ -202,7 +200,7 @@ class Interface:
 
             label = Label(border, image=icone_imagem, bg='white', borderwidth=2, relief="solid")
             label.image = icone_imagem
-            label.bind("<Button-1>", lambda e, nome=nome_item: self.usar_item_command(nome))
+            label.bind("<Button-1>", lambda e, nome=nome_item, dono=dono_item: self.usar_item_command(nome, dono))
             label.pack(fill='both', expand=True)
 
         except StopIteration:
