@@ -2,10 +2,10 @@ from model.player_interface import PlayerInterface
 from ui.interface import Interface
 
 
-class JogoController:
+class Jogo:
     def __init__(self):
-        self.__interface = Interface
-        self.__player_interface = PlayerInterface
+        self.__interface = Interface()
+        self.__player_interface = PlayerInterface(self.__interface)
 
     @property
     def interface(self):
@@ -24,8 +24,7 @@ class JogoController:
         self.__player_interface = value
 
     def iniciar(self):
-        self.interface = Interface()
-        self.partida = PlayerInterface(self.interface)
-        self.interface.iniciar_partida_command = self.partida.comecar_nova_partida_command
-        self.interface.usar_item_command = self.partida.usar_item_command
+        self.interface.iniciar_partida_command = self.player_interface.comecar_nova_partida_command
+        self.interface.usar_item_command = self.player_interface.usar_item_command
+        self.interface.reiniciar_jogo_command = self.player_interface.reiniciar_jogo_command
         self.interface.criar_ui()

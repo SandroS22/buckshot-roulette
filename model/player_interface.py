@@ -1,4 +1,3 @@
-from time import sleep, time
 from dog.dog_actor import DogActor
 from dog.dog_interface import DogPlayerInterface
 from model.arma import Arma
@@ -91,6 +90,7 @@ class PlayerInterface(DogPlayerInterface):
  
         if code == "0" or code == "1":
             self.interface.nova_msg(message)
+            self.interface.atualizar_ui()
         else:
             self.comecar_partida(start_status.get_players())
             self.arma.carregar()
@@ -112,7 +112,21 @@ class PlayerInterface(DogPlayerInterface):
     def usar_item_command(self, item, dono):
         print(item)
         print(dono)
-        
+
+    def reiniciar_jogo_command(self):
+        if not self.is_partida_em_andamento():
+            self.reiniciar_jogo()
+            self.interface.nova_msg("Jogo reiniciado")
+        else:
+            self.interface.nova_msg("Nao existe partida em andamento")
+        self.interface.atualizar_ui()
+
+    def reiniciar_jogo(self):
+        self.arma = Arma()
+        self.player_local = Jogador()
+        self.player_remoto = Jogador()
+        self.status_partida = 1
+        self.interface.reiniciar_interface()
 
     def receber_jogada(self, jogada):
         pass

@@ -7,14 +7,16 @@ class Interface:
         self.__player_icone = "ui/jogador.png"
         self.__root = tk.Tk()
         self.__pente_bar = None
+        self.__is_pente_visivel = False
         self.__balas = []
         self.__msg = ""
-        self.__itens_player =[]
+        self.__itens_player =["ui/algemas.png"]
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6
         self.__iniciar_partida_command = None
         self.__usar_item_command = None
+        self.__reiniciar_jogo_command = None
 
     @property
     def player_icone(self):
@@ -35,6 +37,14 @@ class Interface:
     @pente_bar.setter
     def pente_bar(self, value):
         self.__pente_bar = value
+
+    @property
+    def is_pente_visivel(self):
+        return self.__is_pente_visivel
+
+    @is_pente_visivel.setter
+    def is_pente_visivel(self, value):
+        self.__is_pente_visivel = value
 
     @property
     def balas(self):
@@ -100,6 +110,20 @@ class Interface:
     def usar_item_command(self, value):
         self.__usar_item_command = value
 
+    @property
+    def reiniciar_jogo_command(self):
+        return self.__reiniciar_jogo_command
+
+    @reiniciar_jogo_command.setter
+    def reiniciar_jogo_command(self, value):
+        self.__reiniciar_jogo_command = value
+
+    def trocar_visibilidade_pente(self):
+        if self.is_pente_visivel:
+            self.is_pente_visivel = False
+        else:
+            self.is_pente_visivel = True
+
     def player_icone_click(self, nome_icone):
         if nome_icone == "Jogador 0":
             nome_icone = "Oponente"
@@ -134,6 +158,7 @@ class Interface:
         self.root.config(menu=menubar)
         menu = Menu(menubar, tearoff=False)
         menu.add_command(label="Iniciar partida", command=self.iniciar_partida_command)
+        menu.add_command(label="Reiniciar partida", command=self.reiniciar_jogo_command)
         menubar.add_cascade(label="Menu", menu=menu)
 
     def criar_players(self):
@@ -209,7 +234,7 @@ class Interface:
 
     def criar_mensagens(self):
         turn_label = Label(self.root, text=self.msg, bg='white', borderwidth=2, relief="solid")
-        turn_label.place(x=300, y=200, width=200, height=30)
+        turn_label.place(x=300, y=200, width=250, height=30)
 
     def criar_pente_bar(self):
         self.pente_bar = Frame(self.root, bg='gray', width=20, height=200)
@@ -243,3 +268,14 @@ class Interface:
         self.vida_player = vida_player
         self.vida_oponente = vida_oponente
         self.atualizar_ui()
+
+    def reiniciar_interface(self):
+        self.__pente_bar = None
+        self.__is_pente_visivel = False
+        self.__balas = []
+        self.__msg = ""
+        self.__itens_player =[]
+        self.__itens_oponente = []
+        self.__vida_player = 6
+        self.__vida_oponente = 6
+

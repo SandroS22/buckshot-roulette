@@ -1,4 +1,4 @@
-from controller.jogo import JogoController
+from controller.jogo import Jogo
 
 if __name__ == '__main__':
-    JogoController().iniciar()
+    Jogo().iniciar()
