@@ -14,7 +14,7 @@ class Jogador():
         return self.__id_jogador
 
     @id_jogador.setter
-    def id(self, value):
+    def id_jogador(self, value):
         self.__id_jogador = value
 
     @property
@@ -72,6 +72,10 @@ class Jogador():
             novo_jogador.mudar_turno()
 
         return novo_jogador
+
+    def identificar_item(self, item):
+        item = self.inventario.identificar_item(item)
+        return item
 
 
 

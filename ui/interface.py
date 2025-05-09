@@ -10,7 +10,7 @@ class Interface:
         self.__is_pente_visivel = False
         self.__balas = []
         self.__msg = ""
-        self.__itens_player =["ui/algemas.png"]
+        self.__itens_player =[]
         self.__itens_oponente = []
         self.__vida_player = 6
         self.__vida_oponente = 6

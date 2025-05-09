@@ -5,4 +5,4 @@ class TipoItem(Enum):
     CERVEJA = "Cerveja: remove a munição atual da arma."
     CIGARRO = "Cigarro: recupera 1 de vida."
     LUPA = "Lupa: revela a munição da câmara atual."
-    SERRA = "Serra: duplica o dano da arma."
+    SERRA = "Serra: inflingi 2 de dano."

@@ -24,4 +24,4 @@ class Item:
 
     def icone(self):
         nome_icone = "ui/" + self.tipo.name.lower() + ".png"
-        return nome_icone 
+        return nome_icone
