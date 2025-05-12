@@ -27,4 +27,5 @@ class Jogo:
         self.interface.iniciar_partida_command = self.player_interface.comecar_nova_partida_command
         self.interface.usar_item_command = self.player_interface.usar_item_command
         self.interface.reiniciar_jogo_command = self.player_interface.reiniciar_jogo_command
+        self.interface.atirar_command = self.player_interface.atirar
         self.interface.criar_ui()

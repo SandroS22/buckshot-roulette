@@ -17,11 +17,10 @@ class Interface:
         self.__iniciar_partida_command = None
         self.__usar_item_command = None
         self.__reiniciar_jogo_command = None
+        self.__atirar_command = None
 
     @property
-    def player_icone(self):
-        return self.__player_icone
-
+    def player_icone(self): return self.__player_icone
     @property
     def root(self):
         return self.__root
@@ -118,6 +117,14 @@ class Interface:
     def reiniciar_jogo_command(self, value):
         self.__reiniciar_jogo_command = value
 
+    @property
+    def atirar_command(self):
+        return self.__atirar_command
+
+    @atirar_command.setter
+    def atirar_command(self, value):
+        self.__atirar_command = value
+
     def trocar_visibilidade_pente(self):
         if self.is_pente_visivel:
             self.is_pente_visivel = False
@@ -126,10 +133,10 @@ class Interface:
 
     def player_icone_click(self, nome_icone):
         if nome_icone == "Jogador 0":
-            nome_icone = "Oponente"
+            alvo = "Oponente"
         if nome_icone == "Jogador 1":
-            nome_icone = "Player"
-        print(f"Ícone clicado: {nome_icone}")
+            alvo = "Player"
+        self.atirar_command(alvo)
 
     def criar_ui(self):
         self.root.title("Buckshot Roulette")
@@ -253,7 +260,8 @@ class Interface:
         self.criar_players()
         self.criar_mensagens()
         self.criar_slots()
-        self.criar_pente_bar()
+        if self.is_pente_visivel:
+            self.criar_pente_bar()
 
     def nova_msg(self, msg):
         self.msg = msg
@@ -262,7 +270,6 @@ class Interface:
     def adicionar_itens(self, itens_player, itens_oponente):
         self.itens_player = itens_player
         self.itens_oponente = itens_oponente
-        self.atualizar_ui()
 
     def alterar_vida(self, vida_player, vida_oponente):
         self.vida_player = vida_player
