@@ -134,7 +134,6 @@ class Interface:
 
     def player_icone_click(self, nome_icone):
         alvo = ""
-        print("status_pardida", self.status)
         if nome_icone == "Jogador 0":
             alvo = "Oponente"
         if nome_icone == "Jogador 1":
