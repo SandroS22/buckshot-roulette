@@ -18,6 +18,7 @@ class Interface:
         self.__usar_item_command = None
         self.__reiniciar_jogo_command = None
         self.__atirar_command = None
+        self.status = None
 
     @property
     def player_icone(self): return self.__player_icone
@@ -132,6 +133,8 @@ class Interface:
             self.is_pente_visivel = True
 
     def player_icone_click(self, nome_icone):
+        alvo = ""
+        print("status_pardida", self.status)
         if nome_icone == "Jogador 0":
             alvo = "Oponente"
         if nome_icone == "Jogador 1":
@@ -247,6 +250,7 @@ class Interface:
         self.pente_bar = Frame(self.root, bg='gray', width=20, height=200)
         self.pente_bar.place(x=700, y=150)
 
+        #mudar para for i in range(balas)
         for bala in self.balas:
             color = 'blue' if bala else 'red'
             Label(self.pente_bar, bg=color, width=2, height=1, borderwidth=2, relief="solid").pack()

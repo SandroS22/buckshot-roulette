@@ -27,3 +27,9 @@ class Inventario:
             if item_inventario.tipo.name == item:
                 return item_inventario
         return None
+
+    def is_inventario_cheio(self):
+        if len(self.itens) == 8:
+            return True
+        else:
+            return False

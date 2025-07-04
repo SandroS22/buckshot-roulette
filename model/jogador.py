@@ -1,4 +1,6 @@
+from model import inventario
 from model.inventario import Inventario
+from model.tipoItem import TipoItem
 
 class Jogador():
     def __init__(self):
@@ -8,6 +10,7 @@ class Jogador():
         self.__is_turno = False
         self.__venceu = False
         self.__inventario = Inventario()
+        self.__preso = False
 
     @property
     def id_jogador(self):
@@ -58,6 +61,14 @@ class Jogador():
     def inventario(self, value):
         self.__inventario = value
 
+    @property
+    def preso(self):
+        return self.__preso
+
+    @preso.setter
+    def preso(self, preso):
+        self.__preso = preso
+
     def mudar_turno(self):
         if self.is_turno is True:
             self.is_turno = False
@@ -77,5 +88,11 @@ class Jogador():
         item = self.inventario.identificar_item(item)
         return item
 
+    def atualizar_itens(self, itens):
+        for item in itens:
+            self.inventario.adicionar_item(TipoItem[item])
+
+    def total_itens(self):
+        return len(self.inventario.itens)
 
 

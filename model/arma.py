@@ -4,6 +4,7 @@ class Arma:
     def __init__(self):
         self.__municoes = []
         self.__is_vazio = True
+        self.__serrada = False
 
 
     @property
@@ -20,7 +21,15 @@ class Arma:
 
     @is_vazio.setter
     def is_vazio(self, value):
-        self.__is_vazio = value                                     
+        self.__is_vazio = value
+
+    @property
+    def serrada(self):
+        return self.__serrada
+
+    @serrada.setter
+    def serrada(self, serrada):
+        self.__serrada = serrada
 
     def carregar(self):
         for _ in range(6):
