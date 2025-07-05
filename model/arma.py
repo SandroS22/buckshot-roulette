@@ -40,16 +40,15 @@ class Arma:
         shuffle(self.municoes)
 
     def atirar(self):
-        if not self.is_vazio:
-            self.municoes.pop(0)
-            if len(self.municoes) == 0:
-                self.is_vazio = True
-            return True
-        return False
+        tipo_bala = self.municoes[0]
+        self.remover_municao()
+        if len(self.municoes) == 0:
+            self.is_vazio = True
+        return tipo_bala
 
     def remover_municao(self):
         if not self.is_vazio:
-            return self.municoes.pop(0)
+            self.municoes.pop(0)
 
     def ver_camara(self):
         if not self.is_vazio:

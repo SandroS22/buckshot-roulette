@@ -70,16 +70,16 @@ class Jogador():
         self.__preso = preso
 
     def mudar_turno(self):
-        if self.is_turno is True:
+        if self.is_turno:
             self.is_turno = False
-        elif self.is_turno == False:
+        elif not self.is_turno:
             self.is_turno = True
 
     def iniciar_player(self, player):
         ordem_jogador = player[2]
         novo_jogador = Jogador()
 
-        if ordem_jogador == "1":
+        if ordem_jogador == 1:
             novo_jogador.mudar_turno()
 
         return novo_jogador
