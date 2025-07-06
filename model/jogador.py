@@ -96,3 +96,11 @@ class Jogador:
 
     def total_itens(self):
         return len(self.inventario.itens)
+
+    def reiniciar_player(self):
+        self.inventario = Inventario()
+        self.vida = 6
+        self.is_turno = False
+        self.venceu = False
+        self.preso = False
+

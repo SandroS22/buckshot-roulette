@@ -154,14 +154,58 @@ class PlayerInterface(DogPlayerInterface):
                 self.interface.root.update_idletasks()
                 self.interface.root.update()
                 status = self.get_status_para_outro_jogador()
-                self.enviar_sincronizacao(status, False)
+                self.enviar_sincronizacao(status, False, False)
                 sleep(5)
                 self.interface.trocar_visibilidade_pente()
                 self.atualizar_ui()
                 self.arma.embaralhar_municao()
-                self.enviar_sincronizacao(status, True)
+                self.enviar_sincronizacao(status, True, False)
                 self.interface.msg = ""
-                #self.atualizar_ui()
+
+    def reiniciar_jogo_command(self):
+        self.reiniciar_jogo()
+
+
+    def reiniciar_jogo(self):
+        self.arma = Arma()
+
+        self.player_local.vida = 6
+        self.player_local.preso = False
+        self.player_local.venceu = False
+        self.player_local.inventario.itens = []
+
+        self.player_remoto.vida = 6
+        self.player_remoto.preso = False
+        self.player_remoto.venceu = False
+        self.player_remoto.inventario.itens = []
+
+        # Sorteia o turno
+        if randint(0, 1) == 0:
+            self.player_local.is_turno = True
+            self.player_remoto.is_turno = False
+            self.status_partida = "3"
+            self.interface.nova_msg("Sua vez")
+        else:
+            self.player_local.is_turno = False
+            self.player_remoto.is_turno = True
+            self.status_partida = "5"
+            self.interface.nova_msg("Turno do oponente")
+
+        self.distribuir_itens()
+        self.arma.carregar()
+        self.interface.trocar_visibilidade_pente()
+        self.atualizar_ui()
+        self.interface.root.update_idletasks()
+        self.interface.root.update()
+        status = self.get_status_para_outro_jogador()
+        self.enviar_sincronizacao(status, False, True)
+        sleep(5)
+        self.interface.trocar_visibilidade_pente()
+        self.atualizar_ui()
+        self.arma.embaralhar_municao()
+        self.enviar_sincronizacao(status, True, False)
+        self.interface.msg = ""
+
 
     def usar_item_command(self, item, dono):
         self.usar_item_e_enviar_jogada(item, dono)
@@ -204,12 +248,12 @@ class PlayerInterface(DogPlayerInterface):
                     self.interface.root.update_idletasks()
                     self.interface.root.update()
                     status = self.get_status_para_outro_jogador()
-                    self.enviar_sincronizacao(status, False)
+                    self.enviar_sincronizacao(status, False, False)
                     sleep(5)
                     self.interface.trocar_visibilidade_pente()
                     self.atualizar_ui()
                     self.arma.embaralhar_municao()
-                    self.enviar_sincronizacao(status, True)
+                    self.enviar_sincronizacao(status, True, False)
         elif item_formatado == "CIGARRO":
             if dono == "Player":
                 if self.player_local.vida < 6:
@@ -241,7 +285,7 @@ class PlayerInterface(DogPlayerInterface):
                       "tipo_jogada": "usar_item","match_status": "5"}
             self.dog_server.send_move(jogada)
 
-    def enviar_sincronizacao(self, status_partida, segunda_sinc):
+    def enviar_sincronizacao(self, status_partida, segunda_sinc, reinicio):
         itens_player = []
         itens_oponente = []
         for item in self.player_remoto.inventario.itens:
@@ -255,7 +299,8 @@ class PlayerInterface(DogPlayerInterface):
         else:
             primeira_sinc = True
         jogada = {"itens_player": itens_player, "itens_oponente": itens_oponente, "primeira_sinc": primeira_sinc,
-                  "balas": self.arma.municoes, "match_status": status_partida, "tipo_jogada": "sincronizacao", "segunda_sinc": segunda_sinc}
+                  "balas": self.arma.municoes, "match_status": status_partida, "tipo_jogada": "sincronizacao",
+                  "segunda_sinc": segunda_sinc, "reinicio": reinicio}
         self.dog_server.send_move(jogada)
 
     def get_status_para_outro_jogador(self):
@@ -265,19 +310,7 @@ class PlayerInterface(DogPlayerInterface):
             return "3"
         return self.status_partida
 
-    def reiniciar_jogo_command(self):
-        if not self.is_partida_em_andamento():
-            self.reiniciar_jogo()
-        else:
-            self.interface.nova_msg("Nao existe partida em andamento")
-        self.atualizar_ui()
 
-    def reiniciar_jogo(self):
-        self.arma = Arma()
-        self.player_local = Jogador()
-        self.player_remoto = Jogador()
-        self.status_partida = "0"
-        self.interface.reiniciar_interface()
 
     def receive_move(self, a_move: dict):
         tipo_jogada = a_move["tipo_jogada"]
@@ -290,15 +323,18 @@ class PlayerInterface(DogPlayerInterface):
             if vazio:
                 self.arma.carregar()
                 status = self.get_status_para_outro_jogador()
-                self.enviar_sincronizacao(status, False)
+                self.enviar_sincronizacao(status, False, False)
                 self.interface.trocar_visibilidade_pente()
                 sleep(5)
                 self.atualizar_ui()
                 self.interface.trocar_visibilidade_pente()
                 self.distribuir_itens()
                 self.arma.embaralhar_municao()
-                self.enviar_sincronizacao(status, True)
+                self.enviar_sincronizacao(status, True, False)
         elif tipo_jogada == "sincronizacao":
+            if a_move["reinicio"]:
+                self.player_local.reiniciar_player()
+                self.player_remoto.reiniciar_player()
             self.status_partida = a_move["match_status"]
             if self.status_partida == "3" and a_move["primeira_sinc"] == False:
                 self.player_local.mudar_turno()
