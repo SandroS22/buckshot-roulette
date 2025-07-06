@@ -157,19 +157,22 @@ class PlayerInterface(DogPlayerInterface):
     def usar_item_command(self, item, dono):
         self.usar_item_e_enviar_jogada(item, dono)
 
-    def usar_item(self, item, dono):
+    def usar_item(self, item_escolhido, dono):
+        print(item_escolhido)
+        print(dono)
         if dono == "Player":
-            item = item.split('/')[-1].split('.')[0].upper()
-            item = self.player_local.inventario.identificar_item(item)
-            self.player_local.inventario.remover_item(item)
-        elif dono == "Oponente" and self.status_partida != "5":
-            item = item.split('/')[-1].split('.')[0].upper()
-            item = self.player_remoto.inventario.identificar_item(item)
-            self.player_remoto.inventario.remover_item(item)
+            item_a_remover = item_escolhido.split('/')[-1].split('.')[0].upper()
+            print(item_a_remover)
+            item_a_remover = self.player_local.inventario.identificar_item(item_a_remover)
+            self.player_local.inventario.remover_item(item_a_remover)
+        elif dono == "Oponente":
+            item_a_remover = item_escolhido.split('/')[-1].split('.')[0].upper()
+            print(item_a_remover)
+            item_a_remover = self.player_remoto.inventario.identificar_item(item_a_remover)
+            self.player_remoto.inventario.remover_item(item_a_remover)
+        print("Itens player: ", self.player_local.inventario.listar_itens())
+        print("Itens oponente: ", self.player_remoto.inventario.listar_itens())
 
-        itens_player_formatado = self.formatar_itens_para_icone(self.player_local.inventario.itens)
-        itens_oponente_formatado = self.formatar_itens_para_icone(self.player_remoto.inventario.itens)
-        self.interface.adicionar_itens(itens_player_formatado, itens_oponente_formatado)
         self.atualizar_ui()
 
     def usar_item_e_enviar_jogada(self, item, dono):
@@ -303,11 +306,14 @@ class PlayerInterface(DogPlayerInterface):
                     self.player_local.vida -= 1
                 elif alvo == "Oponente":
                     self.player_remoto.vida -= 1
-            if not self.player_remoto.is_turno:
-                preso = self.player_remoto.preso
-                if not preso:
-                    self.player_local.mudar_turno()
-                    self.player_remoto.mudar_turno()
+            preso = self.player_remoto.preso and self.player_local.is_turno
+            if not preso:
+                self.player_local.mudar_turno()
+                self.player_remoto.mudar_turno()
+                if self.status_partida == "3" or self.status_partida == "4":
+                    self.status_partida = "5"
+                elif self.status_partida == "5":
+                    self.status_partida = "3"
         else:
             if alvo == "Player":
                 self.status_partida = "3"
