@@ -1,4 +1,3 @@
-from model import inventario
 from model.inventario import Inventario
 from model.tipoItem import TipoItem
 
