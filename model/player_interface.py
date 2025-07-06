@@ -1,6 +1,7 @@
 from random import randint
 from dog.dog_actor import DogActor
 from dog.dog_interface import DogPlayerInterface
+from model import item
 from model.arma import Arma
 from model.jogador import Jogador
 from model.tipoItem import TipoItem
@@ -17,6 +18,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__player_local = Jogador()
         self.__player_remoto = Jogador()
         self.__interface = interface
+        self.__sincs_feita = 0
         player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
         self.__dog_server = DogActor()
         message = self.__dog_server.initialize(player_name, self)
@@ -78,6 +80,13 @@ class PlayerInterface(DogPlayerInterface):
     def interface(self, value):
         self.__interface = value
 
+    @property
+    def sincs_feita(self):
+        return self.__sincs_feita
+
+    @sincs_feita.setter
+    def sincs_feita(self, value):
+        self.__sincs_feita = value
 
     def checa_ganhador(self):
         vida_player = self.player_local.vida
@@ -111,6 +120,20 @@ class PlayerInterface(DogPlayerInterface):
             self.interface.trocar_visibilidade_pente()
             self.atualizar_ui()
 
+    def set_start(self, start_status):
+        players = start_status.get_players()
+        self.id_local = start_status.get_local_id()
+
+        self.player_local.id_jogador = players[0][1]
+        self.player_remoto.id_jogador = players[1][1]
+
+        if players[0][2] == "1":
+            self.status_partida = "3"
+            self.player_local.mudar_turno()
+        else:
+            self.status_partida = "5"
+            self.player_remoto.mudar_turno()
+
     def start_match(self, players):
         # inicializar arma aqui
         self.atualizar_ui()
@@ -119,8 +142,6 @@ class PlayerInterface(DogPlayerInterface):
 
         self.player_local = self.player_local.iniciar_player(player_local)
         self.player_remoto = self.player_remoto.iniciar_player(player_remoto)
-        print("Player local: ", self.player_local.is_turno)
-        print("Player remoto: ", self.player_remoto.is_turno)
 
         self.distribuir_itens()
         if self.player_local.is_turno:
@@ -128,21 +149,12 @@ class PlayerInterface(DogPlayerInterface):
         elif self.player_remoto.is_turno:
             self.status_partida = "5"
         self.arma.carregar()
-        status = self.get_turno_para_player_remoto()
+        status = self.get_status_para_outro_jogador()
         self.enviar_sincronizacao(status)
         self.arma.embaralhar_municao()
         self.enviar_sincronizacao(status)
 
-    def get_turno_para_player_remoto(self):
-        status = ""
-        if self.player_local.is_turno:
-            status = "5"
-        elif self.player_remoto.is_turno:
-            status = "3"
-        return status
-
     def usar_item_command(self, item, dono):
-        print(self.status_partida)
         self.usar_item_e_enviar_jogada(item, dono)
 
     def usar_item(self, item, dono):
@@ -182,10 +194,21 @@ class PlayerInterface(DogPlayerInterface):
         for item in self.player_local.inventario.itens:
             itens_oponente.append(item.tipo.name)
 
-        jogada = {"itens_player": itens_player, "itens_oponente": itens_oponente,
+        primeira_sinc = False
+        if not self.sincs_feita > 2:
+             self.sincs_feita += 1
+        else:
+            primeira_sinc = True
+        jogada = {"itens_player": itens_player, "itens_oponente": itens_oponente, "primeira_sinc": primeira_sinc,
                   "balas": self.arma.municoes, "match_status": status_partida, "tipo_jogada": "sincronizacao"}
         self.dog_server.send_move(jogada)
 
+    def get_status_para_outro_jogador(self):
+        if self.status_partida == "3" or self.status_partida == "4":
+            return "5"
+        elif self.status_partida == "5":
+            return "3"
+        return self.status_partida
 
     def reiniciar_jogo_command(self):
         if not self.is_partida_em_andamento():
@@ -211,44 +234,30 @@ class PlayerInterface(DogPlayerInterface):
             vazio = self.arma.is_vazio
             if vazio:
                 self.arma.carregar()
-                status_partida = self.get_turno_para_player_remoto()
-                self.enviar_sincronizacao(status_partida)
+                status = self.get_status_para_outro_jogador()
+                self.enviar_sincronizacao(status)
                 #self.interface.trocar_visibilidade_pente()
                 # sleep(5)
                 self.atualizar_ui()
                 #self.interface.trocar_visibilidade_pente()
                 self.distribuir_itens()
                 self.arma.embaralhar_municao()
-                self.enviar_sincronizacao(status_partida)
+                self.enviar_sincronizacao(status)
         elif tipo_jogada == "sincronizacao":
             self.status_partida = a_move["match_status"]
-            if self.status_partida == "3":
+            if self.status_partida == "3" and a_move["primeira_sinc"] == False:
                 self.player_local.mudar_turno()
             self.player_local.atualizar_itens(a_move["itens_player"])
             self.player_remoto.atualizar_itens(a_move["itens_oponente"])
             self.arma.municoes = a_move["balas"]
             self.arma.is_vazio = False
-            #self.interface.trocar_visibilidade_pente()
+            self.interface.trocar_visibilidade_pente()
             self.atualizar_ui()
             # sleep(5)
             #self.interface.trocar_visibilidade_pente()
         self.atualizar_ui()
 
 
-    def set_start(self, start_status):
-        players = start_status.get_players()
-        self.id_local = start_status.get_local_id()
-
-        self.player_local.id_jogador = players[0][1]
-        self.player_remoto.id_jogador = players[1][1]
-
-        if players[0][2] == "1":
-            self.status_partida = "3"
-            self.player_local.mudar_turno()
-        else:
-            self.status_partida = "5"
-            self.player_remoto.mudar_turno()
-        
     def receive_start(self, start_status):
         self.set_start(start_status)
         self.atualizar_ui()
@@ -294,10 +303,11 @@ class PlayerInterface(DogPlayerInterface):
                     self.player_local.vida -= 1
                 elif alvo == "Oponente":
                     self.player_remoto.vida -= 1
-            preso = self.player_remoto.preso
-            if not preso:
-                self.player_local.mudar_turno()
-                self.player_remoto.mudar_turno()
+            if not self.player_remoto.is_turno:
+                preso = self.player_remoto.preso
+                if not preso:
+                    self.player_local.mudar_turno()
+                    self.player_remoto.mudar_turno()
         else:
             if alvo == "Player":
                 self.status_partida = "3"
@@ -331,5 +341,3 @@ class PlayerInterface(DogPlayerInterface):
         self.interface.vida_oponente = self.player_remoto.vida
         self.interface.vida_player = self.player_local.vida
         self.interface.atualizar_ui()
-        
-

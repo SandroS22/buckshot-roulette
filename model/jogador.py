@@ -2,7 +2,7 @@ from model import inventario
 from model.inventario import Inventario
 from model.tipoItem import TipoItem
 
-class Jogador():
+class Jogador:
     def __init__(self):
         self.__id_jogador = ""
         self.__nome = ""
@@ -77,9 +77,10 @@ class Jogador():
 
     def iniciar_player(self, player):
         ordem_jogador = player[2]
+        print("Ordem: ", ordem_jogador)
         novo_jogador = Jogador()
 
-        if ordem_jogador == 1:
+        if str(ordem_jogador) == "1":
             novo_jogador.mudar_turno()
 
         return novo_jogador
@@ -94,5 +95,3 @@ class Jogador():
 
     def total_itens(self):
         return len(self.inventario.itens)
-
-
