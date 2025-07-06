@@ -90,6 +90,7 @@ class Jogador:
         return item
 
     def atualizar_itens(self, itens):
+        self.inventario.itens = []
         for item in itens:
             self.inventario.adicionar_item(TipoItem[item])
 

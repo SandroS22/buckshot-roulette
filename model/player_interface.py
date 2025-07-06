@@ -158,20 +158,14 @@ class PlayerInterface(DogPlayerInterface):
         self.usar_item_e_enviar_jogada(item, dono)
 
     def usar_item(self, item_escolhido, dono):
-        print(item_escolhido)
-        print(dono)
         if dono == "Player":
             item_a_remover = item_escolhido.split('/')[-1].split('.')[0].upper()
-            print(item_a_remover)
             item_a_remover = self.player_local.inventario.identificar_item(item_a_remover)
             self.player_local.inventario.remover_item(item_a_remover)
         elif dono == "Oponente":
             item_a_remover = item_escolhido.split('/')[-1].split('.')[0].upper()
-            print(item_a_remover)
             item_a_remover = self.player_remoto.inventario.identificar_item(item_a_remover)
             self.player_remoto.inventario.remover_item(item_a_remover)
-        print("Itens player: ", self.player_local.inventario.listar_itens())
-        print("Itens oponente: ", self.player_remoto.inventario.listar_itens())
 
         self.atualizar_ui()
 
@@ -277,15 +271,21 @@ class PlayerInterface(DogPlayerInterface):
         if not inventario_player_local_cheio:
             total = self.player_local.total_itens()
             max = 8 - total
+            if max > 4:
+                max = 4
             for _ in range(max):
                 index = randint(0, 4)
                 self.player_local.inventario.adicionar_item(itens[index])
         if not inventario_player_remoto_cheio:
             total = self.player_remoto.total_itens()
             max = 8 - total
+            if max > 4:
+                max = 4
             for _ in range(max):
                 index = randint(0, 4)
                 self.player_remoto.inventario.adicionar_item(itens[index])
+        print(self.player_local.inventario.listar_itens())
+        print(self.player_remoto.inventario.listar_itens())
 
     def formatar_itens_para_icone(self, itens):
         itens_formatado = []
