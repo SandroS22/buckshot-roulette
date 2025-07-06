@@ -100,26 +100,12 @@ class PlayerInterface(DogPlayerInterface):
             self.player_remoto.venceu = True
             self.interface.nova_msg("Voce perdeu")
             self.status_partida = "1"
-        self.atualizar_ui()
 
     def desconectar(self):
         pass
 
     def comecar_nova_partida_command(self):
-        if self.is_partida_em_andamento():
-            return
-
-        start_status = self.dog_server.start_match(2)
-        code = start_status.get_code()
-        message = start_status.get_message()
-
-        if code == "0" or code == "1":
-            self.interface.nova_msg(message)
-            self.atualizar_ui()
-            self.interface.msg= ""
-        else:
-            self.start_match(start_status.get_players())
-            self.atualizar_ui()
+        self.start_match()
 
     def set_start(self, start_status):
         players = start_status.get_players()
@@ -137,33 +123,41 @@ class PlayerInterface(DogPlayerInterface):
             self.status_partida = "5"
             self.player_remoto.mudar_turno()
 
-    def start_match(self, players):
-        # inicializar arma aqui
-        self.atualizar_ui()
-        player_local = players[0]
-        player_remoto = players[1]
+    def start_match(self):
+        partida_em_andamento = self.is_partida_em_andamento()
+        if not partida_em_andamento:
+            start_status = self.dog_server.start_match(2)
+            code = start_status.get_code()
+            message = start_status.get_message()
+            players = start_status.get_players()
+            if code == "0" or code == "1":
+                self.interface.nova_msg(message)
+            else:
+               # inicializar arma aqui
+                player_local = players[0]
+                player_remoto = players[1]
 
-        self.player_local = self.player_local.iniciar_player(player_local)
-        self.player_remoto = self.player_remoto.iniciar_player(player_remoto)
+                self.player_local = self.player_local.iniciar_player(player_local)
+                self.player_remoto = self.player_remoto.iniciar_player(player_remoto)
 
-        self.distribuir_itens()
-        if self.player_local.is_turno:
-            self.interface.nova_msg("Sua vez")
-            self.status_partida = "3"
-        elif self.player_remoto.is_turno:
-            self.interface.nova_msg("Turno do oponente")
-            self.status_partida = "5"
-        self.arma.carregar()
-        self.interface.trocar_visibilidade_pente()
-        self.atualizar_ui()
-        status = self.get_status_para_outro_jogador()
-        self.enviar_sincronizacao(status)
-        #sleep(5)
-        self.atualizar_ui()
-        self.interface.trocar_visibilidade_pente()
-        self.atualizar_ui()
-        self.arma.embaralhar_municao()
-        self.enviar_sincronizacao(status)
+                self.distribuir_itens()
+                if self.player_local.is_turno:
+                    self.interface.nova_msg("Sua vez")
+                    self.status_partida = "3"
+                elif self.player_remoto.is_turno:
+                    self.interface.nova_msg("Turno do oponente")
+                    self.status_partida = "5"
+                self.arma.carregar()
+                self.interface.trocar_visibilidade_pente()
+                self.atualizar_ui()
+                status = self.get_status_para_outro_jogador()
+                self.enviar_sincronizacao(status)
+                sleep(5)
+                self.interface.trocar_visibilidade_pente()
+                self.atualizar_ui()
+                self.arma.embaralhar_municao()
+                self.enviar_sincronizacao(status)
+                #self.atualizar_ui()
 
 
     def usar_item_command(self, item, dono):
