@@ -98,7 +98,7 @@ class PlayerInterface(DogPlayerInterface):
             self.status_partida = "1"
         if vida_player < 1:
             self.player_remoto.venceu = True
-            self.interface.nova_msg("Vitoria do oponente")
+            self.interface.nova_msg("Voce perdeu")
             self.status_partida = "1"
         self.atualizar_ui()
 
@@ -215,7 +215,6 @@ class PlayerInterface(DogPlayerInterface):
         self.atualizar_ui()
 
     def usar_item_e_enviar_jogada(self, item, dono):
-        print(self.status_partida)
         if (self.status_partida == "3" or self.status_partida == "4") and dono == "Player":
             itens_player = []
             itens_oponente = []
@@ -330,8 +329,6 @@ class PlayerInterface(DogPlayerInterface):
             for _ in range(max):
                 index = randint(0, 4)
                 self.player_remoto.inventario.adicionar_item(itens[index])
-        print(self.player_local.inventario.listar_itens())
-        print(self.player_remoto.inventario.listar_itens())
 
     def formatar_itens_para_icone(self, itens):
         itens_formatado = []
@@ -392,8 +389,6 @@ class PlayerInterface(DogPlayerInterface):
         self.interface.msg = ""
 
     def atualizar_ui(self):
-        #TODO: remove a linha debaixo
-        self.interface.status = self.status_partida
         self.interface.balas = self.arma.municoes
         self.interface.vida_oponente = self.player_remoto.vida
         self.interface.vida_player = self.player_local.vida

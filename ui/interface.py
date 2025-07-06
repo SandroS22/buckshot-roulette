@@ -18,7 +18,6 @@ class Interface:
         self.__usar_item_command = None
         self.__reiniciar_jogo_command = None
         self.__atirar_command = None
-        self.status = None
 
     @property
     def player_icone(self): return self.__player_icone
