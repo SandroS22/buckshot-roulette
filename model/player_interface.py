@@ -102,9 +102,6 @@ class PlayerInterface(DogPlayerInterface):
             self.status_partida = "1"
         self.atualizar_ui()
 
-    def desconectar(self):
-        pass
-
     def comecar_nova_partida_command(self):
         self.start_match()
 
@@ -134,14 +131,12 @@ class PlayerInterface(DogPlayerInterface):
             if code == "0" or code == "1":
                 self.interface.nova_msg(message)
             else:
-               # inicializar arma aqui
-                player_local = players[0]
-                player_remoto = players[1]
+                inf_player_local = players[0]
+                inf_player_remoto = players[1]
 
-                self.player_local = self.player_local.iniciar_player(player_local)
-                self.player_remoto = self.player_remoto.iniciar_player(player_remoto)
+                self.player_local = self.player_local.iniciar_player(inf_player_local)
+                self.player_remoto = self.player_remoto.iniciar_player(inf_player_remoto)
 
-                self.distribuir_itens()
                 if self.player_local.is_turno:
                     self.interface.nova_msg("Sua vez")
                     self.status_partida = "3"
@@ -149,12 +144,13 @@ class PlayerInterface(DogPlayerInterface):
                     self.interface.nova_msg("Turno do oponente")
                     self.status_partida = "5"
                 self.arma.carregar()
+                status = self.get_status_para_outro_jogador()
+                self.distribuir_itens()
+                self.enviar_sincronizacao(status, False, False)
                 self.interface.trocar_visibilidade_pente()
                 self.atualizar_ui()
                 self.interface.root.update_idletasks()
                 self.interface.root.update()
-                status = self.get_status_para_outro_jogador()
-                self.enviar_sincronizacao(status, False, False)
                 sleep(5)
                 self.interface.trocar_visibilidade_pente()
                 self.atualizar_ui()
@@ -179,7 +175,6 @@ class PlayerInterface(DogPlayerInterface):
         self.player_remoto.venceu = False
         self.player_remoto.inventario.itens = []
 
-        # Sorteia o turno
         if randint(0, 1) == 0:
             self.player_local.is_turno = True
             self.player_remoto.is_turno = False
@@ -193,12 +188,12 @@ class PlayerInterface(DogPlayerInterface):
 
         self.distribuir_itens()
         self.arma.carregar()
+        status = self.get_status_para_outro_jogador()
+        self.enviar_sincronizacao(status, False, True)
         self.interface.trocar_visibilidade_pente()
         self.atualizar_ui()
         self.interface.root.update_idletasks()
         self.interface.root.update()
-        status = self.get_status_para_outro_jogador()
-        self.enviar_sincronizacao(status, False, True)
         sleep(5)
         self.interface.trocar_visibilidade_pente()
         self.atualizar_ui()
@@ -243,12 +238,12 @@ class PlayerInterface(DogPlayerInterface):
                 vazio = self.arma.is_vazio
                 if vazio and dono == "Player":
                     self.arma.carregar()
+                    status = self.get_status_para_outro_jogador()
+                    self.enviar_sincronizacao(status, False, False)
                     self.interface.trocar_visibilidade_pente()
                     self.atualizar_ui()
                     self.interface.root.update_idletasks()
                     self.interface.root.update()
-                    status = self.get_status_para_outro_jogador()
-                    self.enviar_sincronizacao(status, False, False)
                     sleep(5)
                     self.interface.trocar_visibilidade_pente()
                     self.atualizar_ui()
@@ -273,14 +268,8 @@ class PlayerInterface(DogPlayerInterface):
 
     def usar_item_e_enviar_jogada(self, item, dono):
         if (self.status_partida == "3" or self.status_partida == "4") and dono == "Player":
-            itens_player = []
-            itens_oponente = []
             self.usar_item(item, dono)
             self.status_partida = "4"
-            for item_inventario in self.player_remoto.inventario.itens:
-                itens_player.append(item_inventario.tipo.name)
-            for item_inventario in self.player_local.inventario.itens:
-                itens_oponente.append(item_inventario.tipo.name)
             jogada = {"item_usado": item, "dono": "Oponente",
                       "tipo_jogada": "usar_item","match_status": "5"}
             self.dog_server.send_move(jogada)
@@ -325,8 +314,8 @@ class PlayerInterface(DogPlayerInterface):
                 status = self.get_status_para_outro_jogador()
                 self.enviar_sincronizacao(status, False, False)
                 self.interface.trocar_visibilidade_pente()
-                sleep(5)
                 self.atualizar_ui()
+                sleep(5)
                 self.interface.trocar_visibilidade_pente()
                 self.distribuir_itens()
                 self.arma.embaralhar_municao()
@@ -367,7 +356,6 @@ class PlayerInterface(DogPlayerInterface):
     def distribuir_itens(self):
         itens = [TipoItem["ALGEMAS"], TipoItem["CERVEJA"], TipoItem["CIGARRO"], TipoItem["LUPA"], TipoItem["SERRA"]]
         inventario_player_local_cheio = self.player_local.inventario.is_inventario_cheio()
-        inventario_player_remoto_cheio = self.player_remoto.inventario.is_inventario_cheio()
         if not inventario_player_local_cheio:
             total = self.player_local.total_itens()
             max = 8 - total
@@ -376,6 +364,7 @@ class PlayerInterface(DogPlayerInterface):
             for _ in range(max):
                 index = randint(0, 4)
                 self.player_local.inventario.adicionar_item(itens[index])
+        inventario_player_remoto_cheio = self.player_remoto.inventario.is_inventario_cheio()
         if not inventario_player_remoto_cheio:
             total = self.player_remoto.total_itens()
             max = 8 - total
@@ -405,8 +394,10 @@ class PlayerInterface(DogPlayerInterface):
                     self.player_local.vida -= 1
                 elif alvo == "Oponente":
                     self.player_remoto.vida -= 1
-            preso = ((self.player_remoto.preso and (self.status_partida == "3" or self.status_partida == "4")) or
-                     (self.status_partida == "5" and self.player_local.preso))
+
+            remoto_turno_local = self.player_remoto.preso and (self.status_partida == "3" or self.status_partida == "4")
+            local_turno_remoto = self.status_partida == "5" and self.player_local.preso
+            preso = remoto_turno_local or local_turno_remoto
             if not preso:
                 self.player_local.mudar_turno()
                 self.player_remoto.mudar_turno()
@@ -443,9 +434,12 @@ class PlayerInterface(DogPlayerInterface):
             self.dog_server.send_move({"match_status": self.status_partida, "tipo_jogada": "atirar", "alvo": alvo})
 
     def receive_withdrawal_notification(self):
-        self.interface.nova_msg("Oponente Desconectou")
-        self.atualizar_ui()
-        self.interface.msg = ""
+        if self.is_partida_em_andamento():
+            self.status_partida = "6"
+            self.player_local.venceu = True
+            self.interface.nova_msg("O oponente desconectou. Voce venceu!")
+        else:
+            self.interface.nova_msg("Oponente Desconectou")
 
     def atualizar_ui(self):
         self.interface.balas = self.arma.municoes

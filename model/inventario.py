@@ -19,9 +19,6 @@ class Inventario:
     def remover_item(self, item):
         self.itens.remove(item)
 
-    def listar_itens(self):
-        return [item.tipo.name for item in self.itens]
-
     def identificar_item(self, item):
         for item_inventario in self.itens:
             if item_inventario.tipo.name == item:
